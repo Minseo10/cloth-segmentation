@@ -33,8 +33,10 @@ class EdgeDetector():
 
         self.depth_im = None
         self.rgb_im = None
-        self.depth_path = "../../Dataset/sample_000000/observation_start/depth_map.tiff"
-        self.rgb_path = "../../Dataset/sample_000000/observation_start/image_left.png"
+        # image size: 2208 x 1242 pixels
+        self.depth_tiff_path = "../../Dataset/sample_000002/observation_start/depth_map.tiff"
+        self.depth_path = "../../Dataset/sample_000002/observation_start/depth_image.jpg"
+        self.rgb_path = "../../Dataset/sample_000002/observation_start/image_left.png"
         self.prediction = None
         self.outer_edges = None
         self.inner_edges = None
@@ -86,8 +88,10 @@ class EdgeDetector():
     def get_image(self, depth_path, rgb_path):
         # depth_im = self.bridge.imgmsg_to_cv2(depth_msg)
         # rgb_im = self.bridge.imgmsg_to_cv2(rgb_msg)
-        depth_im = cv2.imread(depth_path, cv2.IMREAD_UNCHANGED)
+        depth_im = cv2.imread(depth_path, cv2.IMREAD_GRAYSCALE)
         rgb_im = cv2.imread(rgb_path)
+        # cv2.imshow('depth image', depth_im)
+        # cv2.waitKey()
         self.depth_im = np.nan_to_num(depth_im)
         self.rgb_im = cv2.cvtColor(rgb_im, cv2.COLOR_BGR2RGB)
 
@@ -124,8 +128,6 @@ class EdgeDetector():
             self.corners = corners
             self.outer_edges = outer_edges
             self.inner_edges = inner_edges
-
-
         elif self.detection_method == 'clothseg':
             mask = self.model.predict(depth_im)
             self.prediction = mask
@@ -146,18 +148,16 @@ class EdgeDetector():
             self.prediction = corner_preds
 
         # rospy.loginfo('Sending cloth detection response')
-        return self.prediction, self.outer_edges, self.inner_edges, self.corners
+        return rgb_im, depth_im, self.prediction, self.outer_edges, self.inner_edges, self.corners
 
 if __name__ == '__main__':
     ed = EdgeDetector()
-    prediction, outer_edges, inner_edges, corners = ed.detect_edge()
-    cv2.imshow('prediction masks', prediction)
-    cv2.waitKey()
+    rgb_im, depth_im, prediction, outer_edges, inner_edges, corners = ed.detect_edge()
+    # cv2.imshow('prediction masks', prediction)
+    # cv2.waitKey()
     # cv2.imshow('outer edge', outer_edges)
     # cv2.waitKey()
     # cv2.imshow('inner edge', inner_edges)
     # cv2.waitKey()
     # cv2.imshow('corners', corners)
     # cv2.waitKey()
-
-

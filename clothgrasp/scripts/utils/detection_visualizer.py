@@ -1,7 +1,7 @@
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import rospy
+# import rospy
 import cv2
 import numpy as np
 from cv_bridge import CvBridge
@@ -12,7 +12,7 @@ from copy import deepcopy
 
 class DetectionVisualizer:
     def __init__(self, detection_method, crop_dims, arrow_scale=15):
-        self.pub = rospy.Publisher('prediction', Image, queue_size=10)
+        # self.pub = rospy.Publisher('prediction', Image, queue_size=10)
         self.bridge = CvBridge()
         self.detection_method = detection_method
         self.crop_dims = crop_dims
@@ -34,7 +34,7 @@ class DetectionVisualizer:
         plt.gcf().clear()
         fig = plt.figure()
         plt.imshow(rgb_im)
-        plt.imshow(impred, alpha=0.7)
+        plt.imshow(impred, alpha = 0.0)
 
         if show_grasp and not (inner_y == y and inner_x == x):
             v = np.array([inner_x - x, inner_y - y])
@@ -142,6 +142,6 @@ class DetectionVisualizer:
             raise NotImplementedError
 
         msg = self.bridge.cv2_to_imgmsg(buf, encoding='rgb8')
-        self.pub.publish(msg)
+        # self.pub.publish(msg)
         return buf
 

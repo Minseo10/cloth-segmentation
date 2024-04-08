@@ -18,10 +18,11 @@ class ClothSegmenter:
     def predict(self, depth, kernel_size=5, plane_tol=0.004):
         row_start, row_end, col_start, col_end, step = self.crop_dims
         depth = depth[row_start:row_end:step, col_start:col_end:step]
-
+       # print(depth.shape)
         # Fill holes
         zeros = np.where(depth == 0)
         mask = np.zeros_like(depth, np.uint8)
+        #print(mask.shape)
         mask[zeros] = 1
         depth = cv2.inpaint(depth, mask, 3, cv2.INPAINT_NS)
 
@@ -30,6 +31,7 @@ class ClothSegmenter:
         cx = self.K[0, 2]
         cy = self.K[1, 2]
 
+        # We don't need this part when we use depth.tiff instead of png file
         # Get 3D point from 2D pixels
         y_size, x_size = depth.shape[:2]
         xmap, ymap = np.meshgrid(np.arange(x_size), np.arange(y_size))

@@ -77,7 +77,10 @@ class ClothEdgeModel:
         image = image[row_start:row_end:step, col_start:col_end:step]
         max_d = np.nanmax(image)
         image[np.isnan(image)] = max_d
-        img_depth = Image.fromarray(image, mode='F')
+        print("Print image at model.py\n")
+        print(image)
+        # print(image.size())
+        img_depth = Image.fromarray(image, mode='L') ################################
         img_depth = self.transform(img_depth)
 
         min_I = img_depth.min()
